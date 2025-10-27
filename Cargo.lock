@@ -1111,6 +1111,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "fearless_simd"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8fb2907d1f08b2b316b9223ced5b0e89d87028ba8deae9764741dba8ff7f3903"
+dependencies = [
+ "bytemuck",
+]
+
+[[package]]
 name = "field-offset"
 version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1856,7 +1865,7 @@ dependencies = [
  "hayro-interpret",
  "image",
  "kurbo 0.12.0",
- "vello_cpu",
+ "vello_cpu 0.0.1",
 ]
 
 [[package]]
@@ -3916,6 +3925,7 @@ dependencies = [
  "cairo-rs",
  "chrono",
  "clap",
+ "color",
  "flate2",
  "futures",
  "geo",
@@ -3957,6 +3967,7 @@ dependencies = [
  "tracing",
  "unicode-segmentation",
  "usvg",
+ "vello_cpu 0.0.4",
  "xmlwriter",
 ]
 
@@ -5066,7 +5077,23 @@ version = "0.0.1"
 source = "git+https://github.com/linebender/vello?rev=9ae9a530#9ae9a5303bf3043cb3631159bbaedebd26077252"
 dependencies = [
  "bytemuck",
- "fearless_simd",
+ "fearless_simd 0.2.0",
+ "log",
+ "peniko",
+ "png 0.17.16",
+ "skrifa",
+ "smallvec",
+]
+
+[[package]]
+name = "vello_common"
+version = "0.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a235ba928b3109ad9e7696270edb09445a52ae1c7c08e6d31a19b1cdd6cbc24a"
+dependencies = [
+ "bytemuck",
+ "fearless_simd 0.3.0",
+ "hashbrown 0.15.5",
  "log",
  "peniko",
  "png 0.17.16",
@@ -5080,7 +5107,17 @@ version = "0.0.1"
 source = "git+https://github.com/linebender/vello?rev=9ae9a530#9ae9a5303bf3043cb3631159bbaedebd26077252"
 dependencies = [
  "bytemuck",
- "vello_common",
+ "vello_common 0.0.1",
+]
+
+[[package]]
+name = "vello_cpu"
+version = "0.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b0bd1fcf9c1814f17a491e07113623d44e3ec1125a9f3401f5e047d6d326da21"
+dependencies = [
+ "bytemuck",
+ "vello_common 0.0.4",
 ]
 
 [[package]]
