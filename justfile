@@ -174,7 +174,7 @@ install:
     meson install -C {{ build_folder }}
 
 install-flatpak:
-    flatpak-builder --user --install {{ flatpak_app_folder }} build-aux/com.github.flxzt.rnote.Devel.yaml
+    flatpak-builder --user --install --force-clean {{ flatpak_app_folder }} build-aux/com.github.flxzt.rnote.Devel.yaml
 
 run-ui:
     {{ build_folder }}/target/debug/rnote

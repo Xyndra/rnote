@@ -2,6 +2,7 @@
 use super::bitmapimage::BitmapImage;
 use super::brushstroke::BrushStroke;
 use super::content::GeneratedContentImages;
+use super::markerstroke::MarkerStroke;
 use super::shapestroke::ShapeStroke;
 use super::vectorimage::VectorImage;
 use super::{Content, TextStroke};
@@ -33,6 +34,8 @@ pub enum Stroke {
     VectorImage(VectorImage),
     #[serde(rename = "bitmapimage")]
     BitmapImage(BitmapImage),
+    #[serde(rename = "markerstroke")]
+    MarkerStroke(MarkerStroke),
 }
 
 impl Content for Stroke {
@@ -43,6 +46,7 @@ impl Content for Stroke {
             Stroke::TextStroke(textstroke) => textstroke.gen_svg(),
             Stroke::VectorImage(vectorimage) => vectorimage.gen_svg(),
             Stroke::BitmapImage(bitmapimage) => bitmapimage.gen_svg(),
+            Stroke::MarkerStroke(markerstroke) => markerstroke.gen_svg(),
         }
     }
 
@@ -57,6 +61,7 @@ impl Content for Stroke {
             Stroke::TextStroke(textstroke) => textstroke.gen_images(viewport, image_scale),
             Stroke::VectorImage(vectorimage) => vectorimage.gen_images(viewport, image_scale),
             Stroke::BitmapImage(bitmapimage) => bitmapimage.gen_images(viewport, image_scale),
+            Stroke::MarkerStroke(markerstroke) => markerstroke.gen_images(viewport, image_scale),
         }
     }
 
@@ -71,6 +76,7 @@ impl Content for Stroke {
             Stroke::TextStroke(textstroke) => textstroke.draw_highlight(cx, total_zoom),
             Stroke::VectorImage(vectorimage) => vectorimage.draw_highlight(cx, total_zoom),
             Stroke::BitmapImage(bitmapimage) => bitmapimage.draw_highlight(cx, total_zoom),
+            Stroke::MarkerStroke(markerstroke) => markerstroke.draw_highlight(cx, total_zoom),
         }
     }
 
@@ -81,6 +87,7 @@ impl Content for Stroke {
             Stroke::TextStroke(textstroke) => textstroke.update_geometry(),
             Stroke::VectorImage(vectorimage) => vectorimage.update_geometry(),
             Stroke::BitmapImage(bitmapimage) => bitmapimage.update_geometry(),
+            Stroke::MarkerStroke(markerstroke) => markerstroke.update_geometry(),
         }
     }
 }
@@ -93,6 +100,7 @@ impl Drawable for Stroke {
             Stroke::TextStroke(textstroke) => textstroke.draw(cx, image_scale),
             Stroke::VectorImage(vectorimage) => vectorimage.draw(cx, image_scale),
             Stroke::BitmapImage(bitmapimage) => bitmapimage.draw(cx, image_scale),
+            Stroke::MarkerStroke(markerstroke) => markerstroke.draw(cx, image_scale),
         }
     }
 
@@ -103,6 +111,7 @@ impl Drawable for Stroke {
             Stroke::TextStroke(textstroke) => textstroke.draw_to_cairo(cx, image_scale),
             Stroke::VectorImage(vectorimage) => vectorimage.draw_to_cairo(cx, image_scale),
             Stroke::BitmapImage(bitmapimage) => bitmapimage.draw_to_cairo(cx, image_scale),
+            Stroke::MarkerStroke(markerstroke) => markerstroke.draw_to_cairo(cx, image_scale),
         }
     }
 }
@@ -115,6 +124,7 @@ impl Shapeable for Stroke {
             Self::TextStroke(textstroke) => textstroke.bounds(),
             Self::VectorImage(vectorimage) => vectorimage.bounds(),
             Self::BitmapImage(bitmapimage) => bitmapimage.bounds(),
+            Self::MarkerStroke(markerstroke) => markerstroke.bounds(),
         }
     }
 
@@ -125,6 +135,7 @@ impl Shapeable for Stroke {
             Self::TextStroke(textstroke) => textstroke.hitboxes(),
             Self::VectorImage(vectorimage) => vectorimage.hitboxes(),
             Self::BitmapImage(bitmapimage) => bitmapimage.hitboxes(),
+            Self::MarkerStroke(markerstroke) => markerstroke.hitboxes(),
         }
     }
 
@@ -135,6 +146,7 @@ impl Shapeable for Stroke {
             Self::TextStroke(textstroke) => textstroke.outline_path(),
             Self::VectorImage(vectorimage) => vectorimage.outline_path(),
             Self::BitmapImage(bitmapimage) => bitmapimage.outline_path(),
+            Self::MarkerStroke(markerstroke) => markerstroke.outline_path(),
         }
     }
 }
@@ -157,6 +169,9 @@ impl Transformable for Stroke {
             Self::BitmapImage(bitmapimage) => {
                 bitmapimage.translate(offset);
             }
+            Self::MarkerStroke(markerstroke) => {
+                markerstroke.translate(offset);
+            }
         }
     }
 
@@ -176,6 +191,9 @@ impl Transformable for Stroke {
             }
             Self::BitmapImage(bitmapimage) => {
                 bitmapimage.rotate(angle, center);
+            }
+            Self::MarkerStroke(markerstroke) => {
+                markerstroke.rotate(angle, center);
             }
         }
     }
@@ -197,6 +215,9 @@ impl Transformable for Stroke {
             Self::BitmapImage(bitmapimage) => {
                 bitmapimage.scale(scale);
             }
+            Self::MarkerStroke(markerstroke) => {
+                markerstroke.scale(scale);
+            }
         }
     }
 }
@@ -211,6 +232,7 @@ impl Stroke {
             Stroke::ShapeStroke(_) => StrokeLayer::UserLayer(0),
             Stroke::TextStroke(_) => StrokeLayer::UserLayer(0),
             Stroke::VectorImage(_) | Stroke::BitmapImage(_) => StrokeLayer::Image,
+            Stroke::MarkerStroke(_) => StrokeLayer::Highlighter,
         }
     }
 
@@ -219,6 +241,10 @@ impl Stroke {
     /// Returns true if the stroke was modified and needs to update its rendering.
     pub fn set_to_inverted_brightness_color(&mut self) -> bool {
         match self {
+            Stroke::MarkerStroke(marker_stroke) => {
+                marker_stroke.color = marker_stroke.color.to_inverted_brightness_color();
+                true
+            }
             Stroke::BrushStroke(brush_stroke) => {
                 if let Some(color) = brush_stroke.style.stroke_color() {
                     brush_stroke
@@ -265,6 +291,10 @@ impl Stroke {
     /// Returns true if the stroke was modified and needs to update its rendering.
     pub fn set_to_darkest_color(&mut self) -> bool {
         match self {
+            Stroke::MarkerStroke(marker_stroke) => {
+                marker_stroke.color = marker_stroke.color.to_darkest_color();
+                true
+            }
             Stroke::BrushStroke(brush_stroke) => {
                 if let Some(color) = brush_stroke.style.stroke_color() {
                     brush_stroke
@@ -429,6 +459,40 @@ impl Stroke {
 
     pub fn into_xopp(self, current_dpi: f64) -> Option<xoppformat::XoppStrokeType> {
         match self {
+            // TODO: Test this
+            Stroke::MarkerStroke(markerstroke) => {
+                let stroke_width = markerstroke.width;
+                let color = crate::utils::xoppcolor_from_color(markerstroke.color);
+                let tool = xoppformat::XoppTool::Highlighter;
+                let elements_vec = markerstroke.path.into_elements();
+
+                let coords = elements_vec
+                    .iter()
+                    .map(|element| {
+                        utils::convert_coord_dpi(
+                            element.pos,
+                            current_dpi,
+                            xoppformat::XoppFile::DPI,
+                        )
+                    })
+                    .collect::<Vec<na::Vector2<f64>>>();
+
+                Some(xoppformat::XoppStrokeType::XoppStroke(
+                    xoppformat::XoppStroke {
+                        tool,
+                        color,
+                        width: vec![utils::convert_value_dpi(
+                            stroke_width,
+                            current_dpi,
+                            xoppformat::XoppFile::DPI,
+                        )],
+                        coords,
+                        fill: None,
+                        timestamp: None,
+                        audio_filename: None,
+                    },
+                ))
+            }
             Stroke::BrushStroke(brushstroke) => {
                 let (stroke_width, color): (f64, XoppColor) = match &brushstroke.style {
                     // Return early if color is None

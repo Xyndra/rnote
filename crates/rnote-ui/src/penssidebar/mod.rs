@@ -1,6 +1,7 @@
 // Modules
 mod brushpage;
 mod eraserpage;
+mod markerpage;
 mod selectorpage;
 mod shaperpage;
 mod toolspage;
@@ -9,6 +10,7 @@ mod typewriterpage;
 // Re-exports
 pub(crate) use brushpage::RnBrushPage;
 pub(crate) use eraserpage::RnEraserPage;
+pub(crate) use markerpage::RnMarkerPage;
 use rnote_engine::pens::PenStyle;
 pub(crate) use selectorpage::RnSelectorPage;
 pub(crate) use shaperpage::RnShaperPage;
@@ -38,6 +40,10 @@ mod imp {
         pub(crate) shaper_stackpage: TemplateChild<StackPage>,
         #[template_child]
         pub(crate) shaper_page: TemplateChild<RnShaperPage>,
+        #[template_child]
+        pub(crate) marker_stackpage: TemplateChild<StackPage>,
+        #[template_child]
+        pub(crate) marker_page: TemplateChild<RnMarkerPage>,
         #[template_child]
         pub(crate) typewriter_stackpage: TemplateChild<StackPage>,
         #[template_child]
@@ -115,6 +121,10 @@ impl RnPensSideBar {
         self.imp().shaper_page.get()
     }
 
+    pub(crate) fn marker_page(&self) -> RnMarkerPage {
+        self.imp().marker_page.get()
+    }
+
     pub(crate) fn typewriter_page(&self) -> RnTypewriterPage {
         self.imp().typewriter_page.get()
     }
@@ -146,6 +156,9 @@ impl RnPensSideBar {
                             }
                             "shaper_page" => {
                                 appwindow.set_pen_style(PenStyle::Shaper);
+                            }
+                            "marker_page" => {
+                                appwindow.set_pen_style(PenStyle::Marker);
                             }
                             "typewriter_page" => {
                                 appwindow.set_pen_style(PenStyle::Typewriter);

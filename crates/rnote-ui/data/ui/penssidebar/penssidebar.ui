@@ -45,6 +45,22 @@
           </object>
         </child>
 
+        <!-- Marker Page -->
+        <child>
+          <object class="GtkStackPage" id="marker_stackpage">
+            <property name="name">marker_page</property>
+            <property name="title" translatable="yes">Marker</property>
+            <property name="child">
+              <object class="RnMarkerPage" id="marker_page">
+                <property name="margin_top">6</property>
+                <property name="margin_bottom">6</property>
+                <property name="margin_start">6</property>
+                <property name="margin_end">6</property>
+              </object>
+            </property>
+          </object>
+        </child>
+
         <!-- Typewriter Page -->
         <child>
           <object class="GtkStackPage" id="typewriter_stackpage">

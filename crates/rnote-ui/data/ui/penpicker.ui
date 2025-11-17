@@ -34,6 +34,17 @@
           </object>
         </child>
         <child>
+          <object class="GtkToggleButton" id="marker_toggle">
+            <property name="icon_name">pen-marker-symbolic</property>
+            <property name="tooltip_text" translatable="yes">Marker</property>
+            <property name="hexpand">true</property>
+            <property name="group">brush_toggle</property>
+            <style>
+              <class name="flat" />
+            </style>
+          </object>
+        </child>
+        <child>
           <object class="GtkToggleButton" id="typewriter_toggle">
             <property name="icon_name">pen-typewriter-symbolic</property>
             <property name="tooltip_text" translatable="yes">Typewriter</property>

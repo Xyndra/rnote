@@ -371,6 +371,37 @@ impl StrokeStore {
                         }
                     }
                 }
+                Stroke::MarkerStroke(markerstroke) => {
+                    match markerstroke.gen_image_for_last_segments(n_last_segments, image_scale) {
+                        Ok(Some(image)) => {
+                            #[cfg(feature = "ui")]
+                            match render::Image::images_to_rendernodes([&image]) {
+                                Ok(mut rendernodes) => {
+                                    render_comp.rendernodes.append(&mut rendernodes);
+                                    render_comp.images.push(image);
+                                }
+                                Err(e) => {
+                                    render_comp.state = RenderCompState::Dirty;
+                                    error!(
+                                        "Failed to generated rendernodes while appending last segments rendering, Err: {e:?}"
+                                    );
+                                }
+                            }
+                            #[cfg(not(feature = "ui"))]
+                            {
+                                render_comp.images.push(image);
+                            }
+                        }
+
+                        Ok(None) => {}
+                        Err(e) => {
+                            render_comp.state = RenderCompState::Dirty;
+                            error!(
+                                "Failed to generate image while appending last segments rendering, Err: {e:?}"
+                            );
+                        }
+                    }
+                }
                 // regenerate everything for strokes that don't support generating svgs for the last added elements
                 Stroke::ShapeStroke(_)
                 | Stroke::TextStroke(_)

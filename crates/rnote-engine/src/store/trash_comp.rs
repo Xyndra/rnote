@@ -2,7 +2,7 @@
 use super::chrono_comp::StrokeLayer;
 use super::{StrokeKey, StrokeStore};
 use crate::WidgetFlags;
-use crate::strokes::{BrushStroke, Stroke};
+use crate::strokes::{BrushStroke, MarkerStroke, Stroke};
 use p2d::bounding_volume::{Aabb, BoundingVolume};
 use rnote_compose::PenPath;
 use rnote_compose::shapes::Shapeable;
@@ -92,7 +92,9 @@ impl StrokeStore {
 
                 if let Some(stroke) = self.stroke_components.get(key) {
                     match stroke.as_ref() {
-                        Stroke::BrushStroke(_) | Stroke::ShapeStroke(_) => {
+                        Stroke::BrushStroke(_)
+                        | Stroke::ShapeStroke(_)
+                        | Stroke::MarkerStroke(_) => {
                             // First check if eraser even intersects stroke bounds, avoiding unnecessary work
                             if eraser_bounds.intersects(&stroke.bounds()) {
                                 for hitbox in stroke.hitboxes().into_iter() {
@@ -218,6 +220,65 @@ impl StrokeStore {
                                     trash_current_stroke = true;
                                     modified_keys.push(key);
                                 }
+                            }
+                        }
+                    }
+                    Stroke::MarkerStroke(markerstroke) => {
+                        if eraser_bounds.intersects(&stroke_bounds) {
+                            let mut split = Vec::new();
+
+                            let mut hits = markerstroke
+                                .path
+                                .hittest(&eraser_bounds, markerstroke.width * 0.5)
+                                .into_iter();
+
+                            if let Some(first_hit) = hits.next() {
+                                let mut prev = first_hit;
+                                for hit in hits {
+                                    let split_slice = &markerstroke.path.segments[prev..hit];
+
+                                    // skip splits that don't have at least two segments (one's end as path start, one additional)
+                                    if split_slice.len() > 1 {
+                                        split.push(split_slice.to_vec());
+                                    }
+
+                                    prev = hit;
+                                }
+
+                                // Catch the last
+                                let last_split = &markerstroke.path.segments[prev..];
+                                if last_split.len() > 1 {
+                                    split.push(last_split.to_vec());
+                                }
+
+                                for next_split in split {
+                                    let mut next_split_iter = next_split.into_iter();
+                                    let next_start = next_split_iter.next().unwrap().end();
+
+                                    new_strokes.push((
+                                        Stroke::MarkerStroke(MarkerStroke::from_penpath(
+                                            PenPath::new_w_segments(next_start, next_split_iter),
+                                            markerstroke.width,
+                                            markerstroke.shape,
+                                            markerstroke.color,
+                                        )),
+                                        chrono_comp.layer,
+                                    ));
+                                }
+
+                                let first_split = &markerstroke.path.segments[..first_hit];
+                                // Modify the original stroke at the end.
+                                // We keep the start, so we only need at least one segment
+                                if !first_split.is_empty() {
+                                    markerstroke.replace_path(PenPath::new_w_segments(
+                                        markerstroke.path.start,
+                                        first_split.to_vec(),
+                                    ));
+                                } else {
+                                    trash_current_stroke = true;
+                                }
+
+                                modified_keys.push(key);
                             }
                         }
                     }

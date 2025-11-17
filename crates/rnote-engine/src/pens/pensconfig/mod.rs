@@ -1,6 +1,7 @@
 // Modules
 pub mod brushconfig;
 pub mod eraserconfig;
+pub mod markerconfig;
 pub mod selectorconfig;
 pub mod shaperconfig;
 pub mod toolsconfig;
@@ -9,6 +10,7 @@ pub mod typewriterconfig;
 // Re-exports
 pub use brushconfig::BrushConfig;
 pub use eraserconfig::EraserConfig;
+pub use markerconfig::MarkerConfig;
 pub use selectorconfig::SelectorConfig;
 pub use shaperconfig::ShaperConfig;
 pub use toolsconfig::ToolsConfig;
@@ -36,6 +38,8 @@ pub struct PensConfig {
     pub selector_config: SelectorConfig,
     #[serde(default, rename = "tools_config")]
     pub tools_config: ToolsConfig,
+    #[serde(default, rename = "marker_config")]
+    pub marker_config: MarkerConfig,
 
     #[serde(rename = "shortcuts")]
     pub shortcuts: Shortcuts,

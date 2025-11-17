@@ -2,7 +2,8 @@
 use super::penmode::PenModeState;
 use super::shortcuts::ShortcutMode;
 use super::{
-    Brush, Eraser, Pen, PenBehaviour, PenMode, PenStyle, Selector, Shaper, Tools, Typewriter,
+    Brush, Eraser, Marker, Pen, PenBehaviour, PenMode, PenStyle, Selector, Shaper, Tools,
+    Typewriter,
 };
 use crate::DrawableOnDoc;
 use crate::camera::NudgeDirection;
@@ -465,6 +466,7 @@ impl PenHolder {
             PenStyle::Eraser => BacklogPolicy::Limit(Duration::from_millis(33)),
             PenStyle::Selector => BacklogPolicy::Limit(Duration::from_millis(33)),
             PenStyle::Tools => BacklogPolicy::Disable,
+            PenStyle::Marker => BacklogPolicy::Limit(Duration::from_millis(4)), // unsure what this is
         };
 
         // Enable text preprocessing for typewriter
@@ -501,5 +503,6 @@ fn new_pen(pen_style: PenStyle) -> Pen {
         PenStyle::Eraser => Pen::Eraser(Eraser::default()),
         PenStyle::Selector => Pen::Selector(Selector::default()),
         PenStyle::Tools => Pen::Tools(Tools::default()),
+        PenStyle::Marker => Pen::Marker(Marker::default()),
     }
 }

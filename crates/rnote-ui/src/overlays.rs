@@ -143,6 +143,7 @@ impl RnOverlays {
         imp.penpicker.get().init(appwindow);
         imp.penssidebar.get().brush_page().init(appwindow);
         imp.penssidebar.get().shaper_page().init(appwindow);
+        imp.penssidebar.get().marker_page().init(appwindow);
         imp.penssidebar.get().typewriter_page().init(appwindow);
         imp.penssidebar.get().eraser_page().init(appwindow);
         imp.penssidebar.get().selector_page().init(appwindow);
@@ -177,6 +178,14 @@ impl RnOverlays {
                                 .engine_mut()
                                 .change_selection_stroke_colors(stroke_color);
                             appwindow.handle_widget_flags(widget_flags, &canvas);
+                        }
+                        PenStyle::Marker => {
+                            appwindow
+                                .engine_config()
+                                .write()
+                                .pens_config
+                                .marker_config
+                                .color = stroke_color;
                         }
                         PenStyle::Brush | PenStyle::Shaper | PenStyle::Eraser | PenStyle::Tools => {
                         }
@@ -214,7 +223,8 @@ impl RnOverlays {
                         | PenStyle::Brush
                         | PenStyle::Shaper
                         | PenStyle::Eraser
-                        | PenStyle::Tools => {}
+                        | PenStyle::Tools
+                        | PenStyle::Marker => {}
                     }
 
                     // We have a global colorpicker, so we apply it to all styles

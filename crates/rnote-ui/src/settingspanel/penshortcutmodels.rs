@@ -84,6 +84,7 @@ impl Default for ChangePenStyleListFactory {
                         PenStyle::Eraser => gettext("Eraser"),
                         PenStyle::Selector => gettext("Selector"),
                         PenStyle::Tools => gettext("Tools"),
+                        PenStyle::Marker => gettext("Marker"),
                     };
                     next_child
                         .downcast_ref::<Label>()

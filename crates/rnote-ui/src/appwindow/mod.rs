@@ -702,6 +702,7 @@ impl RnAppWindow {
 
         self.overlays().penssidebar().brush_page().refresh_ui(self);
         self.overlays().penssidebar().shaper_page().refresh_ui(self);
+        self.overlays().penssidebar().marker_page().refresh_ui(self);
         self.overlays()
             .penssidebar()
             .typewriter_page()
@@ -919,6 +920,18 @@ impl RnAppWindow {
                         .penssidebar()
                         .sidebar_stack()
                         .set_visible_child_name("tools_page");
+                }
+                PenStyle::Marker => {
+                    self.overlays().penpicker().marker_toggle().set_active(true);
+                    self.overlays()
+                        .penssidebar()
+                        .sidebar_stack()
+                        .set_visible_child_name("marker_page");
+
+                    let marker_color = self.engine_config().read().pens_config.marker_config.color;
+                    self.overlays()
+                        .colorpicker()
+                        .set_stroke_color(gdk::RGBA::from_compose_color(marker_color));
                 }
             }
         }

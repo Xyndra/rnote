@@ -1,6 +1,7 @@
 // Modules
 pub mod brush;
 pub mod eraser;
+pub mod marker;
 pub mod penbehaviour;
 pub mod penholder;
 pub mod penmode;
@@ -14,6 +15,7 @@ pub mod typewriter;
 // Re-exports
 pub use brush::Brush;
 pub use eraser::Eraser;
+pub use marker::Marker;
 pub use penbehaviour::PenBehaviour;
 pub use penholder::PenHolder;
 pub use penmode::PenMode;
@@ -44,6 +46,7 @@ pub enum Pen {
     Eraser(Eraser),
     Selector(Selector),
     Tools(Tools),
+    Marker(Marker),
 }
 
 impl Default for Pen {
@@ -61,6 +64,7 @@ impl PenBehaviour for Pen {
             Pen::Eraser(eraser) => eraser.init(engine_view),
             Pen::Selector(selector) => selector.init(engine_view),
             Pen::Tools(tools) => tools.init(engine_view),
+            Pen::Marker(marker) => marker.init(engine_view),
         }
     }
 
@@ -72,6 +76,7 @@ impl PenBehaviour for Pen {
             Pen::Eraser(eraser) => eraser.deinit(),
             Pen::Selector(selector) => selector.deinit(),
             Pen::Tools(tools) => tools.deinit(),
+            Pen::Marker(marker) => marker.deinit(),
         }
     }
 
@@ -83,6 +88,7 @@ impl PenBehaviour for Pen {
             Pen::Eraser(eraser) => eraser.style(),
             Pen::Selector(selector) => selector.style(),
             Pen::Tools(tools) => tools.style(),
+            Pen::Marker(marker) => marker.style(),
         }
     }
 
@@ -94,6 +100,7 @@ impl PenBehaviour for Pen {
             Pen::Eraser(eraser) => eraser.update_state(engine_view),
             Pen::Selector(selector) => selector.update_state(engine_view),
             Pen::Tools(tools) => tools.update_state(engine_view),
+            Pen::Marker(marker) => marker.update_state(engine_view),
         }
     }
 
@@ -110,6 +117,7 @@ impl PenBehaviour for Pen {
             Pen::Eraser(eraser) => eraser.handle_event(event, now, engine_view),
             Pen::Selector(selector) => selector.handle_event(event, now, engine_view),
             Pen::Tools(tools) => tools.handle_event(event, now, engine_view),
+            Pen::Marker(marker) => marker.handle_event(event, now, engine_view),
         }
     }
 
@@ -121,6 +129,7 @@ impl PenBehaviour for Pen {
             Pen::Eraser(eraser) => eraser.handle_animation_frame(engine_view),
             Pen::Selector(selector) => selector.handle_animation_frame(engine_view),
             Pen::Tools(tools) => tools.handle_animation_frame(engine_view),
+            Pen::Marker(marker) => marker.handle_animation_frame(engine_view),
         }
     }
 
@@ -135,6 +144,7 @@ impl PenBehaviour for Pen {
             Pen::Eraser(eraser) => eraser.fetch_clipboard_content(engine_view),
             Pen::Selector(selector) => selector.fetch_clipboard_content(engine_view),
             Pen::Tools(tools) => tools.fetch_clipboard_content(engine_view),
+            Pen::Marker(marker) => marker.fetch_clipboard_content(engine_view),
         }
     }
 
@@ -149,6 +159,7 @@ impl PenBehaviour for Pen {
             Pen::Eraser(eraser) => eraser.cut_clipboard_content(engine_view),
             Pen::Selector(selector) => selector.cut_clipboard_content(engine_view),
             Pen::Tools(tools) => tools.cut_clipboard_content(engine_view),
+            Pen::Marker(marker) => marker.cut_clipboard_content(engine_view),
         }
     }
 }
@@ -162,6 +173,7 @@ impl DrawableOnDoc for Pen {
             Pen::Eraser(eraser) => eraser.bounds_on_doc(engine_view),
             Pen::Selector(selector) => selector.bounds_on_doc(engine_view),
             Pen::Tools(tools) => tools.bounds_on_doc(engine_view),
+            Pen::Marker(marker) => marker.bounds_on_doc(engine_view),
         }
     }
 
@@ -177,6 +189,7 @@ impl DrawableOnDoc for Pen {
             Pen::Eraser(eraser) => eraser.draw_on_doc(cx, engine_view),
             Pen::Selector(selector) => selector.draw_on_doc(cx, engine_view),
             Pen::Tools(tools) => tools.draw_on_doc(cx, engine_view),
+            Pen::Marker(marker) => marker.draw_on_doc(cx, engine_view),
         }
     }
 }
@@ -210,6 +223,8 @@ pub enum PenStyle {
     Selector,
     #[serde(rename = "tools")]
     Tools,
+    #[serde(rename = "marker")]
+    Marker,
 }
 
 impl Default for PenStyle {
@@ -238,6 +253,7 @@ impl std::str::FromStr for PenStyle {
             "eraser" => Ok(Self::Eraser),
             "selector" => Ok(Self::Selector),
             "tools" => Ok(Self::Tools),
+            "marker" => Ok(Self::Marker),
             s => Err(anyhow::anyhow!(
                 "Creating PenStyle from &str failed, invalid name {s}"
             )),
@@ -254,6 +270,7 @@ impl Display for PenStyle {
             PenStyle::Eraser => write!(f, "eraser"),
             PenStyle::Selector => write!(f, "selector"),
             PenStyle::Tools => write!(f, "tools"),
+            PenStyle::Marker => write!(f, "marker"),
         }
     }
 }
@@ -267,6 +284,7 @@ impl PenStyle {
             Self::Eraser => String::from("pen-eraser-symbolic"),
             Self::Selector => String::from("pen-selector-symbolic"),
             Self::Tools => String::from("pen-tools-symbolic"),
+            Self::Marker => String::from("pen-marker-symbolic"),
         }
     }
 }

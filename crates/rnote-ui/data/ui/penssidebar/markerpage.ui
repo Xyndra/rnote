@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="RnMarkerPage" parent="GtkWidget">
+    <property name="layout-manager">
+      <object class="GtkBoxLayout">
+        <property name="spacing">6</property>
+        <property name="orientation">vertical</property>
+      </object>
+    </property>
+    <property name="hexpand">false</property>
+    <property name="vexpand">false</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkMenuButton" id="markerconfig_menubutton">
+            <property name="icon-name">settings-symbolic</property>
+            <property name="hexpand">true</property>
+            <property name="halign">fill</property>
+            <property name="direction">left</property>
+            <property name="tooltip_text" translatable="yes">Marker Configuration</property>
+            <property name="popover">markerconfig_popover</property>
+            <style>
+              <class name="flat" />
+            </style>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparator">
+        <property name="orientation">vertical</property>
+      </object>
+    </child>
+    <child>
+      <object class="RnStrokeWidthPicker" id="stroke_width_picker">
+      </object>
+    </child>
+
+    <!-- Marker config -->
+    <object class="GtkPopover" id="markerconfig_popover">
+      <child>
+        <object class="GtkBox">
+          <property name="orientation">vertical</property>
+          <property name="margin-top">6</property>
+          <property name="margin-bottom">6</property>
+          <property name="margin-start">6</property>
+          <property name="margin-end">6</property>
+          <property name="spacing">12</property>
+          <child>
+            <object class="GtkBox">
+              <child>
+                <object class="GtkLabel">
+                  <property name="label" translatable="yes">Marker Configuration</property>
+                  <property name="hexpand">true</property>
+                  <property name="halign">center</property>
+                  <style>
+                    <class name="title-3" />
+                  </style>
+                </object>
+              </child>
+              <child>
+                <object class="GtkButton" id="markerconfig_popover_close_button">
+                  <property name="icon-name">window-close-symbolic</property>
+                  <style>
+                    <class name="flat" />
+                    <class name="circular" />
+                  </style>
+                </object>
+              </child>
+            </object>
+          </child>
+          <child>
+            <object class="GtkLabel">
+              <property name="label" translatable="yes">Shape</property>
+              <property name="halign">start</property>
+              <style>
+                <class name="heading" />
+              </style>
+            </object>
+          </child>
+          <child>
+            <object class="GtkListBox" id="marker_shape_listbox">
+              <property name="width-request">300</property>
+              <property name="selection-mode">browse</property>
+              <style>
+                <class name="content" />
+                <class name="large" />
+              </style>
+              <child>
+                <object class="AdwActionRow" id="shape_circular_row">
+                  <property name="title" translatable="yes">Circular</property>
+                  <property name="subtitle" translatable="yes">Round edges and smooth lines</property>
+                </object>
+              </child>
+              <child>
+                <object class="AdwActionRow" id="shape_rectangular_row">
+                  <property name="title" translatable="yes">Rectangular</property>
+                  <property name="subtitle" translatable="yes">Sharp edges and flat ends</property>
+                </object>
+              </child>
+            </object>
+          </child>
+          <child>
+            <object class="GtkLabel">
+              <property name="label" translatable="yes">Strength</property>
+              <property name="halign">start</property>
+              <style>
+                <class name="heading" />
+              </style>
+            </object>
+          </child>
+          <child>
+            <object class="AdwPreferencesGroup">
+              <child>
+                <object class="AdwSpinRow" id="strength_spinrow">
+                  <property name="title" translatable="yes">Strength</property>
+                  <property name="subtitle" translatable="yes">The opacity/transparency of the marker</property>
+                  <property name="adjustment">strength_adj</property>
+                  <property name="numeric">true</property>
+                  <property name="digits">0</property>
+                  <property name="climb-rate">1</property>
+                </object>
+              </child>
+            </object>
+          </child>
+        </object>
+      </child>
+    </object>
+    <object class="GtkAdjustment" id="strength_adj">
+      <property name="lower">0</property>
+      <property name="upper">100</property>
+      <property name="value">50</property>
+      <property name="step-increment">1</property>
+      <property name="page-increment">10</property>
+    </object>
+  </template>
+</interface>
