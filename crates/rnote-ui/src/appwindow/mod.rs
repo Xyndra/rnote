@@ -928,10 +928,12 @@ impl RnAppWindow {
                         .sidebar_stack()
                         .set_visible_child_name("marker_page");
 
-                    let marker_color = self.engine_config().read().pens_config.marker_config.color;
-                    self.overlays()
+                    let current_color = self
+                        .overlays()
                         .colorpicker()
-                        .set_stroke_color(gdk::RGBA::from_compose_color(marker_color));
+                        .stroke_color()
+                        .into_compose_color();
+                    self.engine_config().write().pens_config.marker_config.color = current_color;
                 }
             }
         }
