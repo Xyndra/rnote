@@ -3,7 +3,7 @@ use super::Content;
 use super::content::GeneratedContentImages;
 use crate::Drawable;
 use crate::pens::pensconfig::markerconfig::MarkerShape;
-use crate::render;
+use crate::image;
 use p2d::bounding_volume::{Aabb, BoundingVolume};
 use piet::RenderContext;
 use rnote_compose::ext::AabbExt;
@@ -45,7 +45,7 @@ impl Content for MarkerStroke {
         };
 
         // For markers, render as a single image to avoid self-overlap
-        let image = render::Image::gen_with_piet(
+        let image = image::Image::gen_with_piet(
             |piet_cx| {
                 self.draw_marker_path(piet_cx);
                 Ok(())
@@ -206,7 +206,7 @@ impl MarkerStroke {
         &self,
         n_last_segments: usize,
         image_scale: f64,
-    ) -> Result<Option<render::Image>, anyhow::Error> {
+    ) -> Result<Option<image::Image>, anyhow::Error> {
         let path_len = self.path.segments.len();
 
         let start_el = self
@@ -226,7 +226,7 @@ impl MarkerStroke {
         // Calculate bounds for the range path
         let bounds = range_path.bounds().loosened(self.width * 0.5);
 
-        let image = render::Image::gen_with_piet(
+        let image = image::Image::gen_with_piet(
             |piet_cx| {
                 let bez_path = range_path.to_kurbo_flattened(0.1);
 
